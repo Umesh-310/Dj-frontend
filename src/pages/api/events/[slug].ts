@@ -9,12 +9,10 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const singleEvent = events['events'].filter((evt : {slug: string}) => evt.slug === 'boom-dance-festival-experience')
-  if('slug' in req.query){   
+  const singleEvent = events['events'].filter((evt : {slug: string}) => evt.slug === req.query.slug)
+  
   res.status(200).json(singleEvent) //singleEvent
-  }
-  else{
-    res.status(200).json(events)
-  }
+ 
+  
   
 }
