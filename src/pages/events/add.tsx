@@ -7,6 +7,7 @@ import Layout from "@/components/Layout/Layout";
 import style from "./add.module.css";
 import Link from "next/link";
 import FormInput from "@/components/FormInput/FormInput";
+import { parseCookies } from "@/halper";
 const formValue = {
   name: "",
   slug: "",
@@ -17,7 +18,7 @@ const formValue = {
   time: "",
   description: "",
 };
-const Add = () => {
+const Add = ({ jwt }: { jwt: string }) => {
   const router = useRouter();
   const [values, setvalues] = useState(formValue);
 
@@ -41,9 +42,12 @@ const Add = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
         },
         body: JSON.stringify({ data: values }),
       });
+      ///////////////////////////////
+
       if (!res.ok) {
         toast.error("Something went Worng!", {
           position: "top-center",
@@ -51,6 +55,8 @@ const Add = () => {
         });
       } else {
         const data = await res.json();
+        console.log(data);
+
         setvalues(formValue);
         router.push(`/events/${values.slug}`);
       }
@@ -89,3 +95,14 @@ const Add = () => {
 };
 
 export default Add;
+
+export const getServerSideProps = async ({ req }: any) => {
+  const { token } = parseCookies(req);
+  const { jwt } = token ? JSON.parse(token) : { jwt : null};
+
+  return {
+    props: {
+      jwt: jwt ? jwt : "you are not loggin",
+    },
+  };
+};
