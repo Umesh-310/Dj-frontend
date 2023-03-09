@@ -1,43 +1,48 @@
 import Layout from "@/components/Layout/Layout";
-import React from "react";
 import { singleEvents } from "##";
-import Style from "./Event.module.css";
-import Link from "next/link";
-import Image from "next/image";
-import { FaPencilAlt, FaTimes } from "react-icons/fa";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router";
+import SlugModel from "@/components/slugMModel.tsx/slugModel";
+
 const EventPage = (props: singleEvents) => {
-  const deleteEvent = () => {
-    console.log("delete");
+  const router = useRouter();
+
+  const deleteEvent = async () => {
+    if (confirm("Are you sure?")) {
+      const res = await fetch(`http://localhost:1337/api/events/${props.id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        router.push(`/events`);
+      } else {
+        toast(data.error.message, {
+          position: "top-center",
+          autoClose: 5000,
+          theme: "dark",
+        });
+      }
+    }
   };
   return (
     <Layout>
-      <div className={Style.event}>
-        <div className={Style.comtrols}>
-          <Link href={`/events/edit/${props.id}`}>
-            <FaPencilAlt />
-          </Link>
-          <Link href={"#"} onClick={deleteEvent} className={Style.delete}>
-            <FaTimes /> Delete Event
-          </Link>
-        </div>
-        <span>
-          {props.date} at {props.time}
-        </span>
-        <h1>{props.name}</h1>
-        {props.image && (
-          <div className={Style.image}>
-            <Image src={props.image} width='960' height='600' alt='' />
-          </div>
-        )}
-        <h3>Performers</h3>
-        <p>{props.performers}</p>
-        <h3>Description</h3>
-        <p>{props.description}</p>
-        <h3>Venue : {props.venue}</h3>
-        <p>{props.address}</p>
-
-        <Link href={"/events"}>{"<<"}Back</Link>
-      </div>
+      <>
+        <ToastContainer
+          position='top-center'
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme='colored'
+        />
+        <SlugModel data={props} deleteEvent={deleteEvent} />
+      </>
     </Layout>
   );
 };
@@ -49,12 +54,14 @@ export const getServerSideProps = async (context: {
 }) => {
   const { slug } = context.query;
 
-  const response = await fetch(`http://localhost:3000/api/events/${slug}`);
-  const data = await response.json();
-  console.log(data[0]);
+  const response = await fetch(
+    `http://localhost:1337/api/events?populate=*&filters[$and][0][slug][$eq]=${slug}`,
+  );
+  const fullData = await response.json();
+  const data = { ...fullData.data[0].attributes, id: fullData.data[0].id };
 
   return {
-    props: data[0],
+    props: data,
   };
 };
 
@@ -74,11 +81,10 @@ export const getServerSideProps = async (context: {
 
 // export const getStaticProps = async (context: { params: { slug: string } }) => {
 //   const { slug } = context.params;
-//   console.log(slug);
 
 //   const response = await fetch(`http://localhost:3000/api/events/${slug}`);
 //   const data = await response.json();
-//   console.log(data[0]);
+
 
 //   return {
 //     props: data[0],

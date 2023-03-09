@@ -6,8 +6,12 @@ export type LayoutProps = {
   description: string;
   keywords: string;
 };
+type OptionsFlags<image> = {
+  [Property in keyof image]: string;
+};
+
 export type singleEvents = {
-id: string;
+    id: string;
     name: string;
     slug: string;
     venue: string;
@@ -16,11 +20,9 @@ id: string;
     date: string;
     time: string;
     description: string;
-    image: string;
+    image: {data :{attributes : {url : string}}};
 }
+
 export type eventProps = {
-    event : singleEvents;
+    event : OptionsFlags<singleEvents>;
 }
-export type events = {
-  event: singleEvents[];
-};

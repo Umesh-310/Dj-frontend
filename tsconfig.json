@@ -20,6 +20,6 @@
       "##" : ["./src/components/Types/Types"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/slugMModel.tsx"],
   "exclude": ["node_modules"]
 }

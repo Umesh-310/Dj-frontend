@@ -16,9 +16,12 @@
 }
 
 .controls {
-  position: absolute;
+  position: relative;
   right: 30px;
   top: 0;
+  /* right: 0%; */
+  float: right;
+  /* left: 70%; */
 }
 
 .delete {

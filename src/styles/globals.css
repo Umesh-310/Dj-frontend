@@ -64,3 +64,13 @@ h1 {
 .btn-icon svg {
   margin-right: 5px;
 }
+.eventPagenation{
+  width: 100%;
+  display:inline-flex;
+}
+.eventPagenation a{
+  display: flex;
+  width: 100%;
+  margin:auto;
+  justify-content: space-around;
+}
